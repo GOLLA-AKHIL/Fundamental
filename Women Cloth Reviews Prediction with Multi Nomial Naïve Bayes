@@ -1,0 +1,149 @@
+Importing Libraries
+add Codeadd Markdown
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+add Codeadd Markdown
+Importing Dataset
+add Codeadd Markdown
+df = pd.read_csv("https://raw.githubusercontent.com/YBIFoundation/ProjectHub-MachineLearning/main/Women%20Clothing%20E-Commerce%20Review.csv")
+add Codeadd Markdown
+Data visualization
+Samples of the data is visualized to better understand how it is structured.
+
+add Codeadd Markdown
+df.head()
+add Codeadd Markdown
+df.info()
+add Codeadd Markdown
+df.shape
+add Codeadd Markdown
+Data preprocessing
+Calling isna() method along with the sum() method on dataframe df to find the Review columns with no review text for further processing.
+
+add Codeadd Markdown
+df.isna().sum()
+add Codeadd Markdown
+Filling missing values in the Review column with the value No review is given.
+
+add Codeadd Markdown
+df[df['Review']==""] = np.NaN
+df['Review'].fillna("No review is given", inplace=True)
+df.isna().sum()
+add Codeadd Markdown
+df['Review']
+add Codeadd Markdown
+Defining Target Variable (y) and Feature Variables (X)
+add Codeadd Markdown
+df.columns
+add Codeadd Markdown
+x = df['Review']
+y = df['Rating']
+df['Rating'].value_counts()
+add Codeadd Markdown
+Train Test Split
+add Codeadd Markdown
+from sklearn.model_selection import train_test_split
+​
+x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.7, stratify=y, random_state=2529)
+x_train.shape, x_test.shape, y_train.shape, y_test.shape
+add Codeadd Markdown
+Getting Tokens from Feature Text
+Using CountVectorizer from sci-kit learn
+
+add Codeadd Markdown
+from sklearn.feature_extraction.text import CountVectorizer
+​
+cv = CountVectorizer(lowercase=True, analyzer='word', ngram_range=(2, 3), stop_words='english', max_features=50000)
+x_train = cv.fit_transform(x_train)
+cv.get_feature_names_out()
+add Codeadd Markdown
+x_train.toarray()
+add Codeadd Markdown
+x_test = cv.fit_transform(x_test)
+cv.get_feature_names_out()
+add Codeadd Markdown
+x_test.toarray()
+add Codeadd Markdown
+Model training
+Using Multinomial Naïve Bayes algorithm, which is implemented in sci-kit as MultinomialNB
+
+add Codeadd Markdown
+from sklearn.naive_bayes import MultinomialNB
+​
+model = MultinomialNB()
+model.fit(x_train, y_train)
+add Codeadd Markdown
+Model prediction
+add Codeadd Markdown
+y_pred = model.predict(x_test)
+y_pred.shape
+add Codeadd Markdown
+y_pred
+add Codeadd Markdown
+Getting probability of each predicted class
+
+add Codeadd Markdown
+model.predict_proba(x_test)
+add Codeadd Markdown
+Model evaluation
+add Codeadd Markdown
+from sklearn.metrics import confusion_matrix, classification_report
+​
+print(confusion_matrix(y_test, y_pred))
+add Codeadd Markdown
+print(classification_report(y_test, y_pred))
+add Codeadd Markdown
+Recategorizing ratings as Poor (0) and Good (1)
+add Codeadd Markdown
+df["Rating"].value_counts()
+add Codeadd Markdown
+re-rating 1,2,3 as 0 and 4,5 as 1
+
+add Codeadd Markdown
+df.replace({'Rating': { 1:0, 2:0, 3:0, 4:1, 5:1 }}, inplace=True)
+y = df['Rating']
+x = df['Review']
+add Codeadd Markdown
+Train Test Split
+add Codeadd Markdown
+from sklearn.model_selection import train_test_split
+​
+x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.7, stratify=y, random_state=2529)
+x_train.shape, x_test.shape, y_train.shape, y_test.shape
+add Codeadd Markdown
+Getting Tokens from Feature Text
+add Codeadd Markdown
+from sklearn.feature_extraction.text import CountVectorizer
+​
+cv = CountVectorizer(lowercase=True, analyzer='word', ngram_range=(2, 3), stop_words='english', max_features=50000)
+x_train = cv.fit_transform(x_train)
+x_test = cv.fit_transform(x_test)
+add Codeadd Markdown
+Model re-training
+add Codeadd Markdown
+from sklearn.naive_bayes import MultinomialNB
+​
+model = MultinomialNB()
+model.fit(x_train, y_train)
+add Codeadd Markdown
+Model prediction
+add Codeadd Markdown
+y_pred = model.predict(x_test)
+y_pred.shape
+add Codeadd Markdown
+y_pred
+add Codeadd Markdown
+Model evaluation
+add Codeadd Markdown
+from sklearn.metrics import confusion_matrix, classification_report
+​
+print(confusion_matrix(y_test, y_pred))
+add Codeadd Markdown
+print(classification_report(y_test, y_pred))
+add Codeadd Markdown
+Explanation
+This project is focused on building a prediction model. At first, the all required libraries and a test dataset are imported. The dataset was evaluated and pre processed to prepare for it for processing, then a portion of it was kept for testing and the rest was used to train the model. The model was used to get some prediction dataset. Finnaly, prediction accuracy was checked against the test dataset, some adjusment were made and the model was re-trained for better accuracy.
+
+add Codeadd Markdown
